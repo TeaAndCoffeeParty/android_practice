@@ -30,10 +30,8 @@
             android:id="@+id/increment_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:onClick="increment"
-            android:text="+"/>
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/quantityName" />-->
+            android:onClick="decrement"
+            android:text="-" />
 
         <TextView
             android:id="@+id/quantity_text_view"
@@ -44,16 +42,14 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:textSize="16sp"/>
-<!--            app:layout_constraintBaseline_toBaselineOf="@+id/increment_button"-->
-<!--            app:layout_constraintEnd_toStartOf="@+id/decrement_button"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/increment_button" />-->
 
         <Button
             android:id="@+id/decrement_button"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:onClick="decrement"
-            android:text="-" />
+            android:onClick="increment"
+            android:text="+"/>
+
     </LinearLayout>
 
     <TextView
