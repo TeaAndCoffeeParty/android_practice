@@ -12,17 +12,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int weekday = 5;
-        int weekend = 9;
-        int optimalHours = 7*8;
-        int actualHours = weekday;
-        actualHours = actualHours + weekend *2;
-        int solution = optimalHours - actualHours;
-        display(solution);
+        int dollars = 40;
+        int dollarsToYen = 119;
+        int yen = dollarsToYen * dollars;
+        display1(yen);
     }
 
-    void display(int i) {
-        TextView t = (TextView) findViewById(R.id.display_text_view);
+    void display1(int i) {
+        TextView t = (TextView) findViewById(R.id.display_text_view1);
         t.setText(""+i);
+    }
+
+    void display2(String i) {
+        TextView t = (TextView) findViewById(R.id.display_text_view2);
+        t.setText(i);
+    }
+    void display3(String i) {
+        TextView t = (TextView) findViewById(R.id.display_text_view3);
+        t.setText(i);
     }
 }
