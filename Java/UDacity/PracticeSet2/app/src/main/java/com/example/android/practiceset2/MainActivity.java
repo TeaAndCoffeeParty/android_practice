@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -15,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         String firstName = "Lyla";
         String lastName = "Fujiwara";
         String contactInfo = firstName + " " + lastName;
-        contactInfo = contactInfo + "<" + lastName + "." + firstName + "@justjava.com>";
+        contactInfo = contactInfo + "<" + lastName.toLowerCase(Locale.ROOT) + "." + firstName.toLowerCase(Locale.ROOT) + "@justjava.com>";
         display1(contactInfo);
     }
 
