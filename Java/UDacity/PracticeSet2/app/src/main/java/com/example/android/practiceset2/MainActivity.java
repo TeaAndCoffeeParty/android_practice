@@ -12,15 +12,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int dollars = 40;
-        int dollarsToYen = 119;
-        int yen = dollarsToYen * dollars;
-        display1(yen);
+        String firstName = "Lyla";
+        String lastName = "Fujiwara";
+        String contactInfo = firstName + " " + lastName;
+        contactInfo = contactInfo + "<" + lastName + "." + firstName + "@justjava.com>";
+        display1(contactInfo);
     }
 
-    void display1(int i) {
+    void display1(String i) {
         TextView t = (TextView) findViewById(R.id.display_text_view1);
-        t.setText(""+i);
+        t.setText(i);
     }
 
     void display2(String i) {
