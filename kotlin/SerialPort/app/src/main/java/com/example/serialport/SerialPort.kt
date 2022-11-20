@@ -5,8 +5,7 @@ object SerialPort {
     fun initSerialPort(
         address: String,
         baudRate: Int,
-
     ) {
-        SerialHandle.init()
+        SerialHandle.init(address, baudRate)
     }
 }
