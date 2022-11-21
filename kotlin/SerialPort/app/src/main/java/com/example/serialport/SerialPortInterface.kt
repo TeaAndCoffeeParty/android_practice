@@ -1,39 +1,16 @@
 package com.example.serialport
 
-import android.content.ContentValues.TAG
 import android.serialport.SerialPort
-import com.google.android.gms.vision.clearcut.LogUtils
 import android.util.Log
 import kotlinx.coroutines.*
 import java.io.BufferedInputStream
 import java.io.File
 import kotlin.collections.*
 
-private val cmdHeader = mutableListOf<Byte>((0xC9).toByte(), (0xC8).toByte())
-private val cmdEnd = mutableListOf<Byte>((0x0D).toByte(), (0x0A).toByte())
-private val checkBitLength = 2
-
-private const val cmdGetVersion = 0x00.toByte()
-private const val cmdHeartBeat = 0x01.toByte()
-private const val cmdGotoZero = 0x02.toByte()
-private const val cmdSingleMove = 0x03.toByte()
-private const val cmdSetPrintMoveUpSpeed = 0x04.toByte()
-private const val cmdSetPrintMoveDownSpeed = 0x05.toByte()
-private const val cmdGetPrintPosition = 0x13.toByte()
-private const val cmdProjectorSetIntensity = 0x08.toByte()
-private const val cmdProjectorGetIntensity = 0x09.toByte()
-private const val cmdPrintMoveUp = 0x0E.toByte()
-private const val cmdPrintMoveDown = 0x0F.toByte()
-private const val cmdStop = 0x11.toByte()
-private const val cmdResinTankHeat = 0x0B.toByte()
-private const val cmdPlatformHeat = 0x0D.toByte()
-private const val cmdUltrasound = 0x07.toByte()
-private const val cmdWeight = (0x12).toByte()
-
-internal object SerialHandle {
+internal object SerialPortInterface {
     private const val TAG = "SerialPort"
     private var tryCount = 1
-    private val serialSend = SerialSend()
+    val firmwarePortSender = FirmwarePortSender()
     private var buff = byteArrayOf()
     private var listener : SerialState? = null
     private lateinit var serialHelper: SerialPort
@@ -49,7 +26,7 @@ internal object SerialHandle {
             SerialPort.setSuPath("/System/xbin/su")
             val file = File(address)
             serialHelper = SerialPort(file, baudRate)
-            SerialSend.outputStream = serialHelper.outputStream
+            FirmwarePortSender.outputStream = serialHelper.outputStream
             receivedSerialData(BufferedInputStream(serialHelper.inputStream))
             startHeartbeat()
         } catch (e: Exception) {
@@ -71,31 +48,33 @@ internal object SerialHandle {
     private fun startHeartbeat() {
         heartJob = CoroutineScope(Dispatchers.Main).launch {
             while(true) {
-                heartBeat()
+                firmwarePortSender.getHeartbeat()
                 delay(4000)
             }
         }
     }
 
-    private fun heartBeat() {
-        sendSerialData(cmdHeartBeat)
-    }
-
-    private fun sendSerialData(func: Byte, data: ByteArray = byteArrayOf()) {
-        var cmd = byteArrayOf()
-        cmd += cmdHeader
-        cmd += func
-        val dataSize = data.size
-        val size = dataSize + checkBitLength
-        cmd += size.toByte()
-        if(dataSize > 0) {
-            cmd += data
-        }
-        cmd += checkNum(cmd)
-        cmd += cmdEnd
-        Log.d(TAG, "send:${toHexString(cmd)}")
-        serialSend.send2Port(cmd)
-    }
+//    private fun heartBeat() {
+//        Log.d(SerialHandle.TAG, "send:${SerialHandle.toHexString(cmd)}")
+//        serialSend.sendSerialData(cmdHeartBeat)
+//        sendSerialData(cmdHeartBeat)
+//    }
+//
+//    private fun sendSerialData(func: Byte, data: ByteArray = byteArrayOf()) {
+//        var cmd = byteArrayOf()
+//        cmd += cmdHeader
+//        cmd += func
+//        val dataSize = data.size
+//        val size = dataSize + checkBitLength
+//        cmd += size.toByte()
+//        if(dataSize > 0) {
+//            cmd += data
+//        }
+//        cmd += checkNum(cmd)
+//        cmd += cmdEnd
+//        Log.d(TAG, "send:${toHexString(cmd)}")
+//        serialSend.send2Port(cmd)
+//    }
 
     private fun receivedSerialData(buffInputStream: BufferedInputStream) {
         readJob = CoroutineScope(Dispatchers.IO).launch {
@@ -153,6 +132,9 @@ internal object SerialHandle {
             || byteArray[byteArray.size - 1] != 0x0A.toByte()
     private fun lengthNoRight(byteArray: ByteArray) = byteArray[3].toInt() != (byteArray.size - 6)
 
+    private fun checkNumNotRight(checkNum:ByteArray, byteArray: ByteArray) = checkNum[0] !=
+            byteArray[byteArray.size - 4 ] || checkNum[1] != byteArray[byteArray.size - 3]
+
     private fun checkNum(byteArray: ByteArray) : ByteArray {
         var sum: Long = 0
         byteArray.forEach { sum += it.toLong() and 0xFF }
@@ -164,9 +146,6 @@ internal object SerialHandle {
         array.add(((result and 0xFF).toByte()))
         return array.toByteArray()
     }
-
-    private fun checkNumNotRight(checkNum:ByteArray, byteArray: ByteArray) = checkNum[0] !=
-            byteArray[byteArray.size - 4 ] || checkNum[1] != byteArray[byteArray.size - 3]
 
     private fun decodeSerialData(serialData: ByteArray) {
         var event = ""
