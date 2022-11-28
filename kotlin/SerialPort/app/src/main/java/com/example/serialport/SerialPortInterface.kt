@@ -156,11 +156,11 @@ internal object SerialPortInterface {
             cmdSingleMove -> {}
             cmdPrintMoveUp -> {}
             cmdPrintMoveDown -> {}
-            cmdGetPrintPosition -> {}
+            cmdGetPrintPosition -> { handlePrintPosition(serialData) }
             cmdHeartBeat -> { handleHeartBeat(serialData) }
             cmdUltrasound -> {}
             cmdWeight -> {}
-            else -> {}
+            else -> { Log.i("decodeSerialData", "else:"+ toHexString(serialData))}
         }
     }
 
@@ -180,7 +180,6 @@ internal object SerialPortInterface {
     }
 
     private fun byteToInt(data: Byte) : Int = data.toInt() and 0xff
-
 
     private fun toHexString(byteArray: ByteArray) = with(StringBuilder()) {
         for (byte in byteArray) {
@@ -213,6 +212,7 @@ internal object SerialPortInterface {
             .plus(hasPlatform).plus(",").plus(platformTemperature).plus(",")
             .plus(resinTankTemperature).plus(",")
         listener?.heartBeat(sendData)
+        Log.i("handleHeartBeat", "receivced data:" + toHexString(serialData))
     }
 
     private fun handleFirmwareVersion(serialData: ByteArray) {
@@ -227,5 +227,13 @@ internal object SerialPortInterface {
 
     private fun handleSignleMoveDone(serialData: ByteArray) {
 
+    }
+
+    private fun handlePrintPosition(serialData: ByteArray) {
+        Log.i("GetPrintPosition", toHexString(serialData))
+        var position = ByteArray(4)
+        position = serialData.copyInto(position, 0, 5, 9)
+        var result = byteArrayToInt(position)
+        Log.i("GetPrintPosition", " $result, positionByteArray:"+ toHexString(position))
     }
 }

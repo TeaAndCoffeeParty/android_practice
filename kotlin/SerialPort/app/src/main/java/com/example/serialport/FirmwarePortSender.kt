@@ -38,6 +38,7 @@ class FirmwarePortSender : FirmwareProtocol {
         }
         cmd += checkNum(cmd)
         cmd += cmdEnd
+        Log.i("sendSerialData", "$func, "+toHexString(cmd))
         send2Port(cmd)
     }
 
@@ -119,44 +120,43 @@ class FirmwarePortSender : FirmwareProtocol {
         sendSerialData(cmdSetPrintMoveDownSpeed, data)
     }
 
-    override fun printMoveUp(axis: Int, config: MutableList<Int>) {
+    override fun printMoveUp(motorIndex: Int, config: MutableList<Int>) {
         var data = byteArrayOf()
-        data += axis.toByte()
+        data += motorIndex.toByte()
         data += intToByteArray(config[0])
-        data += intToByteArray(config[1] + axis)
+        data += intToByteArray(config[1])
         data += intToByteArray(config[2])
-        data += intToByteArray(config[3] + axis)
+        data += intToByteArray(config[3])
         data += intToByteArray(config[4])
-        data += intToByteArray(config[5] + axis)
+        data += intToByteArray(config[5])
         data += intToByteArray(config[6])
         sendSerialData(cmdPrintMoveUp, data)
     }
 
-    override fun printMoveDown(axis: Int, config: MutableList<Int>) {
+    override fun printMoveDown(motorIndex: Int, config: MutableList<Int>) {
         var data = byteArrayOf()
+        data += motorIndex.toByte()
         data += intToByteArray(config[0])
-        data += intToByteArray(axis - config[1])
+        data += intToByteArray(config[1])
         data += intToByteArray(config[2])
-        data += intToByteArray(axis - config[3])
+        data += intToByteArray(config[3])
         data += intToByteArray(config[4])
-        data += intToByteArray(axis - config[5])
+        data += intToByteArray(config[5])
         data += intToByteArray(config[6])
         sendSerialData(cmdPrintMoveDown, data)
     }
 
     override fun getPrintPosition(motorIndex: Int) {
         var data = byteArrayOf()
-        data += intToByteArray(motorIndex)
+        data += motorIndex.toByte()
         sendSerialData(cmdGetPrintPosition, data)
+        Log.i("getPrintPosition:", "$cmdGetPrintPosition"+ toHexString(data))
     }
 
     override fun stop(motorIndex: Int) {
         var data = byteArrayOf()
         data += motorIndex.toByte()
         sendSerialData(cmdStop, data)
-    }
-
-    override fun getPosition() {
     }
 
     override fun openPlatformHeat(temperature: Int) {
@@ -186,5 +186,15 @@ class FirmwarePortSender : FirmwareProtocol {
         array.add(((data shr 8) and 0xff).toByte())
         array.add(((data) and 0xff).toByte())
         return array.toByteArray()
+    }
+
+    private fun toHexString(byteArray: ByteArray) = with(StringBuilder()) {
+        for (byte in byteArray) {
+            val hex = byte.toInt() and 0xFF
+            val hexStr = Integer.toHexString(hex)
+            if (hexStr.length == 1) append("0").append(hexStr)
+            else append(hexStr)
+        }
+        toString().uppercase()
     }
 }

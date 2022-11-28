@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
         }
         findViewById<Button>(R.id.printDown).setOnClickListener {
             var testPrintDownConfig = mutableListOf<Int>(125,1,40,6000,1,40,4000,1,40,2000,1,40,125)
-            var testMoveDown = mutableListOf<Int>(800,6900,500,7400,200,8000,200)
+            var testMoveDown = mutableListOf<Int>(800,2000,500,3200,200,4000,200)
             SerialPortInterface.firmwarePortSender.setPrintMoveDownSpeed(1, testPrintDownConfig)
             SerialPortInterface.firmwarePortSender.printMoveDown(1, testMoveDown)
         }
