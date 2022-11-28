@@ -144,6 +144,12 @@ class FirmwarePortSender : FirmwareProtocol {
         sendSerialData(cmdPrintMoveDown, data)
     }
 
+    override fun getPrintPosition(motorIndex: Int) {
+        var data = byteArrayOf()
+        data += intToByteArray(motorIndex)
+        sendSerialData(cmdGetPrintPosition, data)
+    }
+
     override fun stop(motorIndex: Int) {
         var data = byteArrayOf()
         data += motorIndex.toByte()

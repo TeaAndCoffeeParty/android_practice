@@ -151,7 +151,7 @@ internal object SerialPortInterface {
         var event = ""
         var sendData = ""
         when (serialData[2]) {
-            cmdGetVersion -> {}
+            cmdGetVersion -> { handleFirmwareVersion(serialData) }
             cmdGotoZero -> {}
             cmdSingleMove -> {}
             cmdPrintMoveUp -> {}
@@ -213,5 +213,19 @@ internal object SerialPortInterface {
             .plus(hasPlatform).plus(",").plus(platformTemperature).plus(",")
             .plus(resinTankTemperature).plus(",")
         listener?.heartBeat(sendData)
+    }
+
+    private fun handleFirmwareVersion(serialData: ByteArray) {
+        var sendData = ""
+        var event = PortEvent.FirmwareVersion
+        val date = mutableListOf<String>()
+        sendData = date.plus(serialData[4].toString())
+            .plus(serialData[5].toString())
+            .plus(serialData[6].toString()).joinToString(separator = ".")
+        listener?.firmwareVersion(sendData)
+    }
+
+    private fun handleSignleMoveDone(serialData: ByteArray) {
+
     }
 }

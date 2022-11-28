@@ -7,12 +7,42 @@
     app:layoutDescription="@xml/activity_main_scene"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="111dp" />
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="409dp"
+        android:layout_height="20dp"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/getVersion"
+            android:layout_width="192dp"
+            android:layout_height="wrap_content"
+            android:text="FirmwareVersion"
+            tools:layout_editor_absoluteX="40dp"
+            tools:layout_editor_absoluteY="111dp" />
+
+        <Button
+            android:id="@+id/singleMove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SingleMove"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="213dp" />
+        <Button
+            android:id="@+id/printUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Print Up" />
+        <Button
+            android:id="@+id/printDown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Print Down" />
+        <Button
+            android:id="@+id/getPosition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Get Position" />
+    </LinearLayout>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
