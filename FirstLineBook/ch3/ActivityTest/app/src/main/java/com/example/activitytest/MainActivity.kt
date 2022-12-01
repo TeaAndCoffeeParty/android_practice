@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Button
@@ -15,9 +16,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         findViewById<Button>(R.id.button1).setOnClickListener {
-            val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse("https://www.baidu.com")
-            startActivity(intent)
+            val intent = Intent(this, SecondActivity::class.java)
+            startActivityForResult(intent, 1)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when(requestCode) {
+            1 -> if(resultCode == RESULT_OK) {
+                val returnedDode = data?.getStringExtra("data_return")
+                Log.d("FirstActivity", "returned data is $returnedDode")
+            }
         }
     }
 
