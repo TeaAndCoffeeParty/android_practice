@@ -15,7 +15,7 @@ class TitleFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = DataBindingUtil.inflate<FragmentTitleBinding>(inflater,
-            R.id.titleFragment, container, false)
+            R.layout.fragment_title, container, false)
         return binding.root
     }
 }
