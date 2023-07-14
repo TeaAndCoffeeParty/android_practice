@@ -1,5 +1,0 @@
-<resources>
-    <string name="app_name">My Dice Roller</string>
-    <string name="roll_label">Roll</string>
-    <string name="reset_label">Reset</string>
-</resources>
