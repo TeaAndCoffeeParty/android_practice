@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MyWeather</string>
+    <string name="editTextCityHint">please input the city name</string>
+    <string name="buttonSearchText">search</string>
 </resources>
