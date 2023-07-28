@@ -2,4 +2,5 @@
     <string name="app_name">MyWeather</string>
     <string name="editTextCityHint">please input the city name</string>
     <string name="buttonSearchText">search</string>
+    <string name="degree">℃</string>
 </resources>

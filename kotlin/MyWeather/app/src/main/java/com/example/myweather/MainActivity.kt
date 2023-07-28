@@ -10,7 +10,6 @@ import com.example.myweather.event.WeatherResponseEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
 
@@ -27,26 +26,21 @@ class MainActivity : AppCompatActivity() {
         EventBus.getDefault().unregister(this)
     }
 
+    @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(event: WeatherResponseEvent) {
         val weatherResponse = event.weatherResponse
         val kelvins = 273.15
         val cityName = weatherResponse.name
-        val temperature = weatherResponse.main?.temp
+        val temperature = weatherResponse.main?.temp?.minus(kelvins)
         val maxTemperature = weatherResponse.main?.temp_max?.minus(kelvins)
         val minTemperature = weatherResponse.main?.temp_min?.minus(kelvins)
-        val decimalFormat = DecimalFormat("#.#")
-        val weatherStringArray = arrayListOf<String>()
-        for(weather in weatherResponse.weather) {
-            weatherStringArray += "main:${weather.main},description:${weather.description}"
-        }
 
-        @SuppressLint("SetTextI18n")
-        findViewById<TextView>(R.id.weatherResult).text = "cityName:$cityName\n" +
-                    "temperature:${decimalFormat.format(temperature)}\n" +
-                "maxTemperature:${decimalFormat.format(maxTemperature)}\n" +
-                "minTemperature:${decimalFormat.format(minTemperature)}\n" +
-                "weather:$weatherStringArray"
+        findViewById<TextView>(R.id.textViewCityName).text = cityName
+        findViewById<TextView>(R.id.textViewTemperature).text = temperature?.toInt().toString()
+        findViewById<TextView>(R.id.textViewMaxMinTemperature).text = "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
+        findViewById<TextView>(R.id.textViewWeather).text = weatherResponse.weather.first().main
+
     }
 
     private fun searchCityNameWeather() {
