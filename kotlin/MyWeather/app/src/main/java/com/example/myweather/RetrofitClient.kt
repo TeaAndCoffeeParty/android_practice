@@ -1,6 +1,9 @@
 package com.example.myweather
 
+import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
+import com.example.myweather.openWeatherMap.ForecastResponse
+import com.example.myweather.openWeatherMap.WeatherService
 import org.greenrobot.eventbus.EventBus
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,6 +43,47 @@ object RetrofitClient {
         })
     }
 
+    fun getForecastByCityName(cityName: String) {
+        val call = weatherService.getForecastByCityName(cityName, API_KEY)
+        call.enqueue(object : Callback<ForecastResponse> {
+            override fun onResponse(call : Call<ForecastResponse>,
+                response: Response<ForecastResponse>) {
+                if(response.isSuccessful) {
+                    val forecastData = response.body()
+                    handleForecastData(forecastData)
+                } else {
+                    handleForecastFailure(response.message())
+                }
+
+            }
+
+            override fun onFailure(call: Call<ForecastResponse>, t: Throwable) {
+                handleForecastFailure(t.message!!)
+            }
+        })
+    }
+
+    private fun handleForecastFailure(message: String) {
+        println("handleForecastFailure:${message}")
+    }
+
+    private fun handleForecastData(forecastData: ForecastResponse?) {
+        if(forecastData == null) return
+
+        val forecastResponseEvent = ForecastResponseEvent(forecastData)
+        EventBus.getDefault().post(forecastResponseEvent)
+
+        printForecastResponse(forecastData)
+    }
+
+    private  fun printForecastResponse(forecastResponse: ForecastResponse) {
+        println("cod:${forecastResponse.cod}")
+        println("message:${forecastResponse.message}")
+        println("cnt:${forecastResponse.cnt}")
+        println("list:${forecastResponse.forecastCellList?.size}")
+        println("city id:${forecastResponse.forecastCity?.id} name:${forecastResponse.forecastCity?.name}")
+    }
+
     private fun handleWeatherData(weatherData: WeatherResponse?) {
         if (weatherData != null) {
             val weatherResponseEvent = WeatherResponseEvent(weatherData)
@@ -51,8 +95,8 @@ object RetrofitClient {
 
     private fun printWeatherData(weatherData: WeatherResponse?) {
         if (weatherData != null) {
-            println("cord: lat:${weatherData.coord?.lat},lon:${weatherData.coord?.lon}")
-            for (weather in weatherData.weather) {
+            println("cord: lat:${weatherData.weatherResponseCoord?.lat},lon:${weatherData.weatherResponseCoord?.lon}")
+            for (weather in weatherData.weatherResponseWeather) {
                 println(
                     "weather: id:${weather.id},main:${weather.main}," +
                             "description:${weather.description},icon:${weather.icon}"
@@ -60,17 +104,17 @@ object RetrofitClient {
             }
             println("base:${weatherData.base}")
             println(
-                "main: temperature:${weatherData.main?.temp},pressure:${weatherData.main?.pressure}," +
-                        "humidity:${weatherData.main?.humidity},temperature_min:${weatherData.main?.temp_min}," +
-                        "temperature_max:${weatherData.main?.temp_max}"
+                "main: temperature:${weatherData.weatherResponseMain?.temp},pressure:${weatherData.weatherResponseMain?.pressure}," +
+                        "humidity:${weatherData.weatherResponseMain?.humidity},temperature_min:${weatherData.weatherResponseMain?.temp_min}," +
+                        "temperature_max:${weatherData.weatherResponseMain?.temp_max}"
             )
             println("visibility:${weatherData.visibility}")
-            println("wind: speed:${weatherData.wind?.speed},deq:${weatherData.wind?.deg}")
+            println("wind: speed:${weatherData.weatherResponseWind?.speed},deq:${weatherData.weatherResponseWind?.deg}")
             println("clouds: clouds:${weatherData.clouds?.clouds}")
             println("dt: ${weatherData.dt}")
             println(
-                "sys: type:${weatherData.sys?.type},id:${weatherData.sys?.id},message:${weatherData.sys?.message}" +
-                        ",country:${weatherData.sys?.country},+sunrise:${weatherData.sys?.sunrise},+sunset:${weatherData.sys?.sunset}"
+                "sys: type:${weatherData.weatherResponseSys?.type},id:${weatherData.weatherResponseSys?.id},message:${weatherData.weatherResponseSys?.message}" +
+                        ",country:${weatherData.weatherResponseSys?.country},+sunrise:${weatherData.weatherResponseSys?.sunrise},+sunset:${weatherData.weatherResponseSys?.sunset}"
             )
             println("id: ${weatherData.id}")
             println("name: ${weatherData.name}")

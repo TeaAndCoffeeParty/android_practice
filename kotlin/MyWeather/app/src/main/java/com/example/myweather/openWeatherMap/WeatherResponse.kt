@@ -4,23 +4,23 @@ import com.google.gson.annotations.SerializedName
 
 data class WeatherResponse(
     @SerializedName("coord")
-    var coord: Coord? = null,
+    var weatherResponseCoord: WeatherResponseCoord? = null,
     @SerializedName("weather")
-    var weather : ArrayList<Weather>,
+    var weatherResponseWeather : ArrayList<WeatherResponseWeather>,
     @SerializedName("base")
     var base: String? = null,
     @SerializedName("main")
-    var main: Main? = null,
+    var weatherResponseMain: WeatherResponseMain? = null,
     @SerializedName("visibility")
     var visibility: Int = 0,
     @SerializedName("wind")
-    var wind: Wind ?= null,
+    var weatherResponseWind: WeatherResponseWind ?= null,
     @SerializedName("clouds")
-    var clouds: Clouds ? = null,
+    var clouds: WeatherResponseClouds ? = null,
     @SerializedName("dt")
     val dt: Int,
     @SerializedName("sys")
-    var sys: Sys ? = null,
+    var weatherResponseSys: WeatherResponseSys ? = null,
     @SerializedName("id")
     var id: Int = 0,
     @SerializedName("name")
@@ -29,25 +29,25 @@ data class WeatherResponse(
     var cod: Int
 )
 
-class Coord {
+class WeatherResponseCoord {
     @SerializedName("lon")
     var lon : Float = 0.toFloat()
     @SerializedName("lat")
     var lat : Float = 0.toFloat()
 }
 
-class Weather {
+class WeatherResponseWeather {
     @SerializedName("id")
     var id: Int = 0
     @SerializedName("main")
-    var main: String ?= null
+    var main: String = ""
     @SerializedName("description")
-    var description: String ?= null
+    var description: String = ""
     @SerializedName("icon")
-    var icon: String ?= null
+    var icon: String = ""
 }
 
-class Main {
+class WeatherResponseMain {
     @SerializedName("temp")
     var temp: Float = 0.toFloat()
     @SerializedName("pressure")
@@ -60,19 +60,19 @@ class Main {
     var temp_max: Float = 0.toFloat()
 }
 
-class Wind {
+class WeatherResponseWind {
     @SerializedName("speed")
     var speed: Float = 0.toFloat()
     @SerializedName("deg")
     var deg: Int = 0
 }
 
-class Clouds {
+class WeatherResponseClouds {
     @SerializedName("clouds")
     var clouds: Int = 0
 }
 
-class Sys {
+class WeatherResponseSys {
     @SerializedName("type")
     var type: Int = 0
     @SerializedName("id")
