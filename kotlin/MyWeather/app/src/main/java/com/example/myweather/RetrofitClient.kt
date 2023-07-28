@@ -1,7 +1,7 @@
 package com.example.myweather
 
-import android.content.Context
-import android.content.Intent
+import com.example.myweather.event.WeatherResponseEvent
+import org.greenrobot.eventbus.EventBus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,7 +19,7 @@ object RetrofitClient {
 
     private val weatherService: WeatherService by lazy { retrofit.create(WeatherService::class.java) }
 
-    fun getWeatherByCityName(context: Context, cityName: String) {
+    fun getWeatherByCityName(cityName: String) {
         val call = weatherService.getWeatherByCityName(cityName, API_KEY)
         call.enqueue(object : Callback<WeatherResponse> {
             override fun onResponse(
@@ -28,7 +28,7 @@ object RetrofitClient {
             ) {
                 if (response.isSuccessful) {
                     val weatherData = response.body()
-                    handleWeatherData(context, weatherData)
+                    handleWeatherData(weatherData)
                 } else {
                     handleWeatherFailure(response.message())
                 }
@@ -40,19 +40,10 @@ object RetrofitClient {
         })
     }
 
-    private fun handleWeatherData(context: Context, weatherData: WeatherResponse?) {
+    private fun handleWeatherData(weatherData: WeatherResponse?) {
         if (weatherData != null) {
-            val intent = Intent("com.example.MyWeather.ACTION_WEATHER_DATA")
-            intent.putExtra("cityName", weatherData.name)
-            intent.putExtra("temperature", weatherData.main?.temp)
-            intent.putExtra("maxTemperature", weatherData.main?.temp_max)
-            intent.putExtra("minTemperature", weatherData.main?.temp_min)
-            val weatherStringArray = arrayListOf<String>()
-            for(weather in weatherData.weather) {
-                weatherStringArray += "main:${weather.main},description:${weather.description}"
-            }
-            intent.putStringArrayListExtra("weather", weatherStringArray)
-            context.sendBroadcast(intent)
+            val weatherResponseEvent = WeatherResponseEvent(weatherData)
+            EventBus.getDefault().post(weatherResponseEvent)
 
             printWeatherData(weatherData)
         }

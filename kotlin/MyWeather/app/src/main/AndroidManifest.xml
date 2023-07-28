@@ -27,13 +27,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <receiver
-            android:name=".WeatherResponseReceiver"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.example.MyWeather.ACTION_WEATHER_DATA"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>
