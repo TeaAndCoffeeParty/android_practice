@@ -78,4 +78,12 @@
         android:textSize="20sp"
         android:gravity="center" />
 
+    <ListView
+        android:id="@+id/listViewTodayForcast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/textViewWeather"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
