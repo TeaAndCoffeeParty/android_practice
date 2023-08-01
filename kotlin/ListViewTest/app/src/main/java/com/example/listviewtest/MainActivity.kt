@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     private val data = listOf("Apple", "Banana", "Orange", "Watermelon",
@@ -17,7 +18,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         initFruits()
         val adapter = FruitAdapter(this, R.layout.fruit_item, fruitList)
-        findViewById<ListView>(R.id.listView).adapter = adapter
+        val listView = findViewById<ListView>(R.id.listView)
+        listView.adapter = adapter
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val fruit = fruitList[position]
+            Toast.makeText(this, fruit.name, Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     private fun initFruits() {
