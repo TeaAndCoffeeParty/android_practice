@@ -78,6 +78,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data)
-        findViewById<ListView>(R.id.listViewTodayForcast).adapter = adapter
+        findViewById<ListView>(R.id.listViewTodayForecast).adapter = adapter
     }
 }
