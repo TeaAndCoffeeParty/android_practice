@@ -3,24 +3,25 @@ package com.example.myweather
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
+import com.example.myweather.openWeatherMap.ForecastAdapter
 import com.example.myweather.openWeatherMap.ForecastResponse
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val kelvins = 273.15
+    lateinit var forecastRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
 
         EventBus.getDefault().register(this)
         findViewById<Button>(R.id.buttonSearch).setOnClickListener { searchCityNameWeather() }
+
+        forecastRecyclerView = findViewById(R.id.forecastRecyclerView)
+        forecastRecyclerView.layoutManager = LinearLayoutManager(this)
 
         val testCityName = "Shaoxing"
         RetrofitClient.getWeatherByCityName(testCityName)
@@ -67,17 +71,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateForecastList(forecastResponse: ForecastResponse) {
-        val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
-        val data = mutableListOf<String>()
-        for (cell in forecastResponse.forecastCellList!!) {
-            val oneLine = "${simpleDateFormat.format(cell.dt*1000L)}\n" +
-                    "temperature:${cell.main.temperature.minus(kelvins).toInt()}," +
-                    "feel_like:${cell.main.feelsLike.minus(kelvins).toInt()},\n" +
-                    "weather:${cell.weather.first().main},${cell.weather.first().description}"
-            data.add(oneLine)
-        }
 
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data)
-        findViewById<ListView>(R.id.listViewTodayForecast).adapter = adapter
+        val adapter = ForecastAdapter(forecastResponse.forecastCellList!!)
+        forecastRecyclerView.adapter = adapter
     }
 }
