@@ -1,58 +1,78 @@
 package com.example.myweather
 
+import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
-import com.google.android.material.snackbar.Snackbar
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
-import android.view.Menu
-import android.view.MenuItem
-import com.example.myweather.databinding.ActivityMainBinding
+import android.widget.TextView
+import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.myweather.event.ForecastResponseEvent
+import com.example.myweather.event.WeatherResponseEvent
+import com.example.myweather.openWeatherMap.ForecastAdapter
+import com.example.myweather.openWeatherMap.ForecastResponse
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+    private val kelvins = 273.15
+    lateinit var forecastRecyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        EventBus.getDefault().register(this)
+        findViewById<Button>(R.id.buttonSearch).setOnClickListener { searchCityNameWeather() }
 
-        setSupportActionBar(binding.toolbar)
+        forecastRecyclerView = findViewById(R.id.forecastRecyclerView)
+        forecastRecyclerView.layoutManager = LinearLayoutManager(this)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
+        val testCityName = "Shaoxing"
+        RetrofitClient.getWeatherByCityName(testCityName)
+        RetrofitClient.getForecastByCityName(testCityName)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
+    override fun onDestroy() {
+        super.onDestroy()
+        EventBus.getDefault().unregister(this)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        return when (item.itemId) {
-            R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
+    @SuppressLint("SetTextI18n")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReceiveWeatherResponse(event: WeatherResponseEvent) {
+        val weatherResponse = event.weatherResponse
+        val cityName = weatherResponse.name
+        val temperature = weatherResponse.weatherResponseMain?.temp?.minus(kelvins)
+        val maxTemperature = weatherResponse.weatherResponseMain?.temp_max?.minus(kelvins)
+        val minTemperature = weatherResponse.weatherResponseMain?.temp_min?.minus(kelvins)
+
+        findViewById<TextView>(R.id.textViewCityName).text = cityName
+        findViewById<TextView>(R.id.textViewTemperature).text = temperature?.toInt().toString()
+        findViewById<TextView>(R.id.textViewMaxMinTemperature).text = "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
+        findViewById<TextView>(R.id.textViewWeather).text = "${weatherResponse.weatherResponseWeather.first().main} | ${weatherResponse.weatherResponseWeather.first().description}"
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReceiveForecastResponse(event: ForecastResponseEvent) {
+        updateForecastList(event.forecastResponse)
+    }
+
+    private fun searchCityNameWeather() {
+        val cityName = findViewById<EditText>(R.id.editTextCity).text.toString().trim()
+        RetrofitClient.getWeatherByCityName(cityName)
+        RetrofitClient.getForecastByCityName(cityName)
+    }
+
+    private fun updateForecastList(forecastResponse: ForecastResponse) {
+
+        val adapter = ForecastAdapter(forecastResponse.forecastCellList!!)
+        forecastRecyclerView.adapter = adapter
     }
 }
