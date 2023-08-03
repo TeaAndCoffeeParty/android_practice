@@ -10,7 +10,7 @@ import com.example.myweather.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ForecastAdapter(val forecastList: List<ForecastCell>) :
+class ForecastAdapter(private val forecastList: List<ForecastCell>) :
     RecyclerView.Adapter<ForecastAdapter.ViewHolder>() {
 
         inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
