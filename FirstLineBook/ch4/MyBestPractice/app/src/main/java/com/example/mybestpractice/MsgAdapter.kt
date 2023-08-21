@@ -6,11 +6,13 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class MsgAdapter(val msgList: List<Msg>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    inner class LeftViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    sealed class MsgViewHolder(view: View) : RecyclerView.ViewHolder(view)
+
+    inner class LeftViewHolder(view: View) : MsgViewHolder(view) {
         val leftMsg: TextView = view.findViewById(R.id.leftMsg)
     }
 
-    inner class RightViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class RightViewHolder(view: View) : MsgViewHolder(view) {
         val rightMsg: TextView = view.findViewById(R.id.rightMsg)
     }
 
@@ -32,7 +34,6 @@ class MsgAdapter(val msgList: List<Msg>) : RecyclerView.Adapter<RecyclerView.Vie
         when(holder) {
             is LeftViewHolder -> holder.leftMsg.text = msg.content
             is RightViewHolder -> holder.rightMsg.text = msg.content
-            else -> throw java.lang.IllegalArgumentException()
         }
     }
 
