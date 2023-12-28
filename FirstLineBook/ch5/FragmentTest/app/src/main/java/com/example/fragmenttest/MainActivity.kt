@@ -11,17 +11,17 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        findViewById<Button>(R.id.button).setOnClickListener {
-            replaceFragment(AnotherRightFragment())
-        }
-        replaceFragment(RightFragment())
+//        findViewById<Button>(R.id.button).setOnClickListener {
+//            replaceFragment(AnotherRightFragment())
+//        }
+//        replaceFragment(RightFragment())
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        val fragmentManager = supportFragmentManager
-        val transaction = fragmentManager.beginTransaction()
-        transaction.replace(R.id.rightLayout, fragment)
-        transaction.addToBackStack(null)
-        transaction.commit()
-    }
+//    private fun replaceFragment(fragment: Fragment) {
+//        val fragmentManager = supportFragmentManager
+//        val transaction = fragmentManager.beginTransaction()
+//        transaction.replace(R.id.rightLayout, fragment)
+//        transaction.addToBackStack(null)
+//        transaction.commit()
+//    }
 }
