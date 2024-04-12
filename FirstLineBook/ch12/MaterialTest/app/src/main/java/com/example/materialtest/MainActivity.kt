@@ -19,6 +19,11 @@ class MainActivity : AppCompatActivity() {
             it.setDisplayHomeAsUpEnabled(true)
             it.setHomeAsUpIndicator(R.drawable.ic_menu)
         }
+        binding.navView.setCheckedItem(R.id.navCall)
+        binding.navView.setNavigationItemSelectedListener {
+            binding.drawerLayout.closeDrawers()
+            true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
