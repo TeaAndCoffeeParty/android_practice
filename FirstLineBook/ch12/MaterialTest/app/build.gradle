@@ -10,6 +10,7 @@ android {
     defaultConfig {
         applicationId "com.example.materialtest"
         minSdk 28
+        //noinspection ExpiredTargetSdkVersion
         targetSdk 32
         versionCode 1
         versionName "1.0"
