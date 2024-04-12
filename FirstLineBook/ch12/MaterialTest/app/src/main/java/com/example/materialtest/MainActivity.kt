@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.core.view.GravityCompat
 import com.example.materialtest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -14,6 +15,10 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setHomeAsUpIndicator(R.drawable.ic_menu)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -29,6 +34,7 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT).show()
             R.id.settings -> Toast.makeText(this, "You clicked Settings",
                 Toast.LENGTH_SHORT).show()
+            android.R.id.home -> binding.drawerLayout.openDrawer(GravityCompat.START)
         }
         return true
     }
