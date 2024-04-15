@@ -1,5 +1,6 @@
 package com.example.materialtest
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -9,6 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.materialtest.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
     private  lateinit var binding: ActivityMainBinding
@@ -22,6 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     val fruitList = ArrayList<Fruit>()
 
+    @SuppressLint("ResourceAsColor")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -48,6 +51,23 @@ class MainActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = layoutManager
         val adapter = FruitAdapter(this, fruitList)
         binding.recyclerView.adapter = adapter
+
+        binding.swipRefresh.setColorSchemeColors(com.google.android.material.R.color.design_default_color_primary)
+        binding.swipRefresh.setOnRefreshListener {
+            refreshFruits(adapter)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun refreshFruits(adapter: FruitAdapter) {
+        thread {
+            Thread.sleep(200)
+            runOnUiThread {
+                initFruits()
+                adapter.notifyDataSetChanged()
+                binding.swipRefresh.isRefreshing = false
+            }
+        }
     }
 
     private fun initFruits() {
