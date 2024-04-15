@@ -27,7 +27,10 @@
                 android:value="" />
         </activity>
 
-        <activity android:name=".FruitActivity" />
+        <activity
+            android:name=".FruitActivity"
+            android:theme="@style/FruitActivityTheme">
+        </activity>
     </application>
 
 </manifest>
