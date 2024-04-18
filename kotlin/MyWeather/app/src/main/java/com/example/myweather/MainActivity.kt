@@ -1,17 +1,11 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.os.Build
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.myweather.databinding.ActivityMainBinding
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
@@ -20,7 +14,6 @@ import com.example.myweather.openWeatherMap.ForecastResponse
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val kelvins = 273.15
@@ -57,8 +50,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.cityWeatherLayout.textViewCityName.text = cityName
         binding.cityWeatherLayout.textViewTemperature.text = temperature?.toInt().toString()
-        binding.cityWeatherLayout.textViewMaxMinTemperature.text = "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
-        binding.cityWeatherLayout.textViewWeather.text = "${weatherResponse.weatherResponseWeather.first().main} | ${weatherResponse.weatherResponseWeather.first().description}"
+        binding.cityWeatherLayout.textViewMaxMinTemperature.text =
+            "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
+        binding.cityWeatherLayout.textViewWeather.text =
+            weatherResponse.weatherResponseWeather.first().main + " | " +
+                    weatherResponse.weatherResponseWeather.first().description
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
