@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SearchBarTest</string>
+    <string name="searchbar_hint">Search Hint</string>
+</resources>
