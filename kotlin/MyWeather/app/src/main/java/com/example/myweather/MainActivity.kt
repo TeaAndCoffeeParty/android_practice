@@ -1,6 +1,7 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.os.Build
 import android.os.Bundle
 import android.widget.Button
@@ -10,6 +11,8 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import com.example.myweather.databinding.ActivityMainBinding
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
 import com.example.myweather.openWeatherMap.ForecastAdapter
@@ -21,17 +24,17 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
     private val kelvins = 273.15
-    lateinit var forecastRecyclerView: RecyclerView
+    private lateinit var binding : ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         EventBus.getDefault().register(this)
-        findViewById<Button>(R.id.buttonSearch).setOnClickListener { searchCityNameWeather() }
+        binding.searchBarLayout.buttonSearch.setOnClickListener { searchCityNameWeather() }
 
-        forecastRecyclerView = findViewById(R.id.forecastRecyclerView)
-        forecastRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
 
         val testCityName = "Shaoxing"
         RetrofitClient.getWeatherByCityName(testCityName)
@@ -52,10 +55,10 @@ class MainActivity : AppCompatActivity() {
         val maxTemperature = weatherResponse.weatherResponseMain?.temp_max?.minus(kelvins)
         val minTemperature = weatherResponse.weatherResponseMain?.temp_min?.minus(kelvins)
 
-        findViewById<TextView>(R.id.textViewCityName).text = cityName
-        findViewById<TextView>(R.id.textViewTemperature).text = temperature?.toInt().toString()
-        findViewById<TextView>(R.id.textViewMaxMinTemperature).text = "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
-        findViewById<TextView>(R.id.textViewWeather).text = "${weatherResponse.weatherResponseWeather.first().main} | ${weatherResponse.weatherResponseWeather.first().description}"
+        binding.cityWeatherLayout.textViewCityName.text = cityName
+        binding.cityWeatherLayout.textViewTemperature.text = temperature?.toInt().toString()
+        binding.cityWeatherLayout.textViewMaxMinTemperature.text = "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
+        binding.cityWeatherLayout.textViewWeather.text = "${weatherResponse.weatherResponseWeather.first().main} | ${weatherResponse.weatherResponseWeather.first().description}"
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -65,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchCityNameWeather() {
-        val cityName = findViewById<EditText>(R.id.editTextCity).text.toString().trim()
+        val cityName = binding.searchBarLayout.editTextCity.text.toString().trim()
         RetrofitClient.getWeatherByCityName(cityName)
         RetrofitClient.getForecastByCityName(cityName)
     }
@@ -73,6 +76,6 @@ class MainActivity : AppCompatActivity() {
     private fun updateForecastList(forecastResponse: ForecastResponse) {
 
         val adapter = ForecastAdapter(forecastResponse.forecastCellList!!)
-        forecastRecyclerView.adapter = adapter
+        binding.forecastRecyclerView.adapter = adapter
     }
 }

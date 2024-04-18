@@ -7,60 +7,19 @@
     tools:context=".MainActivity">
 
     <include
+        android:id="@+id/search_bar_layout"
         layout="@layout/custom_search_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/textViewCityName"
-        android:layout_width="wrap_content"
+    <include
+        android:id="@+id/city_weather_layout"
+        layout="@layout/city_weather"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:width="200dp"
-        android:height="50dp"
-        android:gravity="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayoutSearch" />
-
-    <TextView
-        android:id="@+id/textViewTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewCityName" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/degree"
-        android:textSize="20sp"
-        app:layout_constraintStart_toEndOf="@id/textViewTemperature"
-        app:layout_constraintTop_toTopOf="@id/textViewTemperature" />
-
-    <TextView
-        android:id="@+id/textViewMaxMinTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="12sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewTemperature" />
-
-    <TextView
-        android:id="@+id/textViewWeather"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewMaxMinTemperature" />
+        app:layout_constraintTop_toBottomOf="@id/search_bar_layout"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/forecastRecyclerView"
@@ -68,8 +27,8 @@
         android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textViewWeather"
-        app:layout_goneMarginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/city_weather_layout"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
