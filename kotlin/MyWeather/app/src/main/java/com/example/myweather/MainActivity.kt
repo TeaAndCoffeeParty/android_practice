@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myweather.cityListUtils.CityListDataManager
 import com.example.myweather.databinding.ActivityMainBinding
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
@@ -18,6 +19,7 @@ import org.greenrobot.eventbus.ThreadMode
 class MainActivity : AppCompatActivity() {
     private val kelvins = 273.15
     private lateinit var binding : ActivityMainBinding
+    private lateinit var cityListManager : CityListDataManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,10 +30,11 @@ class MainActivity : AppCompatActivity() {
         binding.searchBarLayout.buttonSearch.setOnClickListener { searchCityNameWeather() }
 
         binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
+        cityListManager = CityListDataManager(this)
 
-        val testCityName = "Shaoxing"
-        RetrofitClient.getWeatherByCityName(testCityName)
-        RetrofitClient.getForecastByCityName(testCityName)
+//        val testCityName = "Shaoxing"
+//        RetrofitClient.getWeatherByCityName(testCityName)
+//        RetrofitClient.getForecastByCityName(testCityName)
     }
 
     override fun onDestroy() {
