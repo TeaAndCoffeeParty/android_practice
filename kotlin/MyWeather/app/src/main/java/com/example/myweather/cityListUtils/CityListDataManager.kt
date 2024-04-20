@@ -54,7 +54,7 @@ class CityListDataManager(private val context: Context) {
     }
 
     private fun testGetJsonData(context: Context) {
-        var file = File(context.filesDir, jsonFileName)
+        val file = File(context.filesDir, jsonFileName)
         try {
             val fis = FileInputStream(file)
             val reader = BufferedReader(InputStreamReader(fis))
