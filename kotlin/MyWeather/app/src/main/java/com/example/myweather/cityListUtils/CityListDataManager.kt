@@ -21,7 +21,7 @@ class CityListDataManager(private val context: Context) {
     private val jsonFileName = "city.list.json"
     private val cityListJsonFile : File = File(context.filesDir, jsonFileName)
     init {
-        if(!isExistCityListJsonFile(context)) {
+        if(!isExistCityListJsonFile()) {
             CoroutineScope(Dispatchers.IO).launch {
                 unzipGzFile(context)
             }
@@ -30,7 +30,7 @@ class CityListDataManager(private val context: Context) {
         }
     }
 
-    private fun isExistCityListJsonFile(context: Context) : Boolean {
+    private fun isExistCityListJsonFile() : Boolean {
         val isExisted = cityListJsonFile.exists()
         Log.d(tag, "city list json file is existed:$isExisted")
         return isExisted
@@ -62,9 +62,14 @@ class CityListDataManager(private val context: Context) {
             var line : String?
             while (reader.readLine().also { line = it } != null) {
                 stringBuilder.append(line).append("\n")
-                Log.d(tag, "line:$line")
             }
             val fileContent = stringBuilder.toString()
+            val gson = Gson()
+            val citys = gson.fromJson(fileContent, Array<CityData>::class.java)
+            for(city in citys) {
+                println("city name:${city.name}")
+            }
+
         } catch (e: IOException) {
             e.printStackTrace()
         }
