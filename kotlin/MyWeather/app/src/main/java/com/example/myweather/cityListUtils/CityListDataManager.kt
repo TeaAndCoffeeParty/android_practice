@@ -1,6 +1,7 @@
 package com.example.myweather.cityListUtils
 
 import android.content.Context
+import android.util.JsonReader
 import android.util.Log
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -21,12 +22,12 @@ class CityListDataManager(private val context: Context) {
     private val jsonFileName = "city.list.json"
     private val cityListJsonFile : File = File(context.filesDir, jsonFileName)
     init {
-        if(!isExistCityListJsonFile()) {
-            CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            if(!isExistCityListJsonFile()) {
                 unzipGzFile(context)
+            } else {
+                readContentOneByOne(context)
             }
-        } else {
-            testGetJsonData(context)
         }
     }
 
@@ -53,9 +54,9 @@ class CityListDataManager(private val context: Context) {
         }
     }
 
-    private fun testGetJsonData(context: Context) {
-        val file = File(context.filesDir, jsonFileName)
+    private fun readContentOneByOne(context: Context) {
         try {
+            val file = File(context.filesDir, jsonFileName)
             val fis = FileInputStream(file)
             val reader = BufferedReader(InputStreamReader(fis))
             val stringBuilder = StringBuilder()
