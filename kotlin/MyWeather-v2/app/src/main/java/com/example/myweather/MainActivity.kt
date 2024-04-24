@@ -1,10 +1,8 @@
 package com.example.myweather
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat

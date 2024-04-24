@@ -21,13 +21,13 @@ class CityListDataManager(private val context: Context) {
     private val tag = "CityListDataManager"
     private val jsonFileName = "city.list.json"
     private val cityListJsonFile : File = File(context.filesDir, jsonFileName)
+    private lateinit var cityDataList : Array<CityData>
     init {
         CoroutineScope(Dispatchers.IO).launch {
             if(!isExistCityListJsonFile()) {
                 unzipGzFile(context)
-            } else {
-                readContentOneByOne(context)
             }
+            readContentOneByOne(context)
         }
     }
 
@@ -54,25 +54,25 @@ class CityListDataManager(private val context: Context) {
         }
     }
 
-    private fun readContentOneByOne(context: Context) {
-        try {
-            val file = File(context.filesDir, jsonFileName)
-            val fis = FileInputStream(file)
-            val reader = BufferedReader(InputStreamReader(fis))
-            val stringBuilder = StringBuilder()
-            var line : String?
-            while (reader.readLine().also { line = it } != null) {
-                stringBuilder.append(line).append("\n")
-            }
-            val fileContent = stringBuilder.toString()
-            val gson = Gson()
-            val citys = gson.fromJson(fileContent, Array<CityData>::class.java)
-            for(city in citys) {
-                println("city name:${city.name}")
-            }
-
-        } catch (e: IOException) {
-            e.printStackTrace()
+    private fun readContentOneByOne(context: Context) = try {
+        val gson = Gson()
+        val file = File(context.filesDir, jsonFileName)
+        val fis = FileInputStream(file)
+        val reader = BufferedReader(InputStreamReader(fis))
+        val stringBuilder = StringBuilder()
+        var line : String?
+        while (reader.readLine().also { line = it } != null) {
+            stringBuilder.append(line).append("\n")
         }
+        val fileContent = stringBuilder.toString()
+        cityDataList = gson.fromJson(fileContent, Array<CityData>::class.java)
+
+        for(city in cityDataList) {
+            println("city name:${city.name}")
+        }
+
+    } catch (e: IOException) {
+        e.printStackTrace()
     }
 }
+
