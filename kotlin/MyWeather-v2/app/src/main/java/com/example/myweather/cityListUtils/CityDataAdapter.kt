@@ -52,8 +52,7 @@ class CityDataAdapter(private val originCityDataList: List<CityData>) :
                     filterCityDataList.add(item)
                 }
             }
-
-            notifyDataSetChanged()
         }
+        notifyDataSetChanged()
     }
 }
