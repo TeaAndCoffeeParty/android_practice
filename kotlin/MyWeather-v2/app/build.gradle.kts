@@ -33,6 +33,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    viewBinding { enable = true }
 }
 
 dependencies {
@@ -45,4 +46,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    //network
+    implementation(libs.com.squareup.retrofit2)
+    implementation(libs.com.squareup.retrofit2.converterGson)
+    implementation(libs.org.greenrobot.eventbus)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.com.google.code.gson)
 }
