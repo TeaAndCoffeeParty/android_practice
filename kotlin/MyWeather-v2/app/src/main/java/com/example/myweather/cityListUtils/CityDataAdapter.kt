@@ -9,11 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
 
 
-class CityDataAdapter(private val cityDataList: List<CityData>) :
+class CityDataAdapter(private val originCityDataList: List<CityData>) :
     RecyclerView.Adapter<CityDataAdapter.ViewHolder>() {
 
-    private val originCityDataList : List<CityData> = cityDataList
-    private var filterCityDataList : MutableList<CityData> = cityDataList.toMutableList()
+    private var filterCityDataList : MutableList<CityData> = originCityDataList.toMutableList()
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val cityDataId : TextView = view.findViewById<TextView>(R.id.city_data_id)

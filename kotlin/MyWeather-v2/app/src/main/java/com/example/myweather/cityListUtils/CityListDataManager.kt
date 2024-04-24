@@ -75,6 +75,7 @@ class CityListDataManager(private val context: Context) {
         e.printStackTrace()
     }
 
+    @Suppress("unused")
     fun printCityDataList() {
         for(city in cityDataList) {
             println("city name:${city.name}")
