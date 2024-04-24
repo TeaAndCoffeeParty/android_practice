@@ -1,5 +1,6 @@
 package com.example.myweather.cityListUtils
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,15 +8,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
 
+
 class CityDataAdapter(private val cityDataList: List<CityData>) :
     RecyclerView.Adapter<CityDataAdapter.ViewHolder>() {
 
-        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val cityDataId : TextView = view.findViewById<TextView>(R.id.city_data_id)
-            val cityDataName : TextView = view.findViewById<TextView>(R.id.city_data_name)
-            val cityDataCountry : TextView = view.findViewById<TextView>(R.id.city_data_country)
-            val cityDataCoordinate: TextView = view.findViewById<TextView>(R.id.city_data_coordinate)
-        }
+    private val originCityDataList : List<CityData> = cityDataList
+    private var filterCityDataList : MutableList<CityData> = cityDataList.toMutableList()
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val cityDataId : TextView = view.findViewById<TextView>(R.id.city_data_id)
+        val cityDataName : TextView = view.findViewById<TextView>(R.id.city_data_name)
+        val cityDataCountry : TextView = view.findViewById<TextView>(R.id.city_data_country)
+        val cityDataCoordinate: TextView = view.findViewById<TextView>(R.id.city_data_coordinate)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(
@@ -24,15 +29,32 @@ class CityDataAdapter(private val cityDataList: List<CityData>) :
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val cityData = cityDataList[position]
+        val cityData = filterCityDataList[position]
         holder.cityDataId.text = cityData.id.toString()
         holder.cityDataName.text = cityData.name
         holder.cityDataCountry.text = cityData.country
         holder.cityDataCoordinate.text = buildString {
-            append(cityData.coord.lon)
+            append(String.format("%.1f", cityData.coord.lon))
             append(",")
-            append(cityData.coord.lat.toString())
+            append(String.format("%.1f", cityData.coord.lat))
         }
     }
-    override fun getItemCount() = cityDataList.size
+    override fun getItemCount() = filterCityDataList.size
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun setFilter(filterText: String) {
+        if(filterText.isEmpty()) {
+            filterCityDataList.clear()
+            filterCityDataList.addAll(originCityDataList)
+        } else {
+            filterCityDataList.clear()
+            for (item in originCityDataList) {
+                if (item.name.lowercase().contains(filterText.lowercase())) {
+                    filterCityDataList.add(item)
+                }
+            }
+
+            notifyDataSetChanged()
+        }
+    }
 }

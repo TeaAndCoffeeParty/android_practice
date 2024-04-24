@@ -1,7 +1,6 @@
 package com.example.myweather.cityListUtils
 
 import android.content.Context
-import android.util.JsonReader
 import android.util.Log
 import com.example.myweather.event.CityDataListReadyEvent
 import com.google.gson.Gson

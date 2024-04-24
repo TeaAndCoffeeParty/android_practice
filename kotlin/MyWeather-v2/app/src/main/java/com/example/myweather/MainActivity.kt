@@ -3,6 +3,7 @@ package com.example.myweather
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -53,8 +54,16 @@ class MainActivity : AppCompatActivity() {
 
         binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.cityDataRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.cityDataRecyclerView.adapter = CityDataAdapter(emptyList<CityData>())
         binding.searchBar.apply {
             setOnClickListener { binding.searchView.show() }
+        }
+        binding.searchView.editText.setOnEditorActionListener { v, i, event->
+            val filterText = v.editableText.toString()
+            Toast.makeText(v.context, "the text: $filterText", Toast.LENGTH_SHORT).show()
+            val cityDataAdapter : CityDataAdapter= binding.cityDataRecyclerView.adapter as CityDataAdapter
+            cityDataAdapter.setFilter(filterText)
+            return@setOnEditorActionListener false
         }
     }
 
