@@ -2,13 +2,17 @@ package com.example.myweather
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.myweather.cityListUtils.CityData
+import com.example.myweather.cityListUtils.CityDataAdapter
 import com.example.myweather.cityListUtils.CityListDataManager
 import com.example.myweather.databinding.ActivityMainBinding
+import com.example.myweather.event.CityDataListReadyEvent
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
 import com.example.myweather.openWeatherMap.ForecastAdapter
@@ -18,6 +22,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : AppCompatActivity() {
+    private val tag = "MainActivity"
     private val kelvins = 273.15
     private lateinit var binding : ActivityMainBinding
     private lateinit var cityListManager : CityListDataManager
@@ -33,15 +38,24 @@ class MainActivity : AppCompatActivity() {
         }
 
         EventBus.getDefault().register(this)
-        binding.searchBarLayout.buttonSearch.setOnClickListener { searchCityNameWeather() }
+        initView()
 
-        binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
         cityListManager = CityListDataManager(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+    }
+
+    private fun initView() {
+        binding.searchBarLayout.buttonSearch.setOnClickListener { searchCityNameWeather() }
+
+        binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.cityDataRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.searchBar.apply {
+            setOnClickListener { binding.searchView.show() }
+        }
     }
 
 
@@ -68,6 +82,12 @@ class MainActivity : AppCompatActivity() {
         updateForecastList(event.forecastResponse)
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onReceiveCityDataListReadyEvent(event: CityDataListReadyEvent) {
+        Log.d(tag, "on received city data list ready event ${event.cityDataList.size}")
+        updateCityDataList(event.cityDataList)
+    }
+
     private fun searchCityNameWeather() {
         val cityName = binding.searchBarLayout.editTextCity.text.toString().trim()
         RetrofitClient.getWeatherByCityName(cityName)
@@ -75,8 +95,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateForecastList(forecastResponse: ForecastResponse) {
-
         val adapter = ForecastAdapter(forecastResponse.forecastCellList!!)
         binding.forecastRecyclerView.adapter = adapter
+    }
+
+    private fun updateCityDataList(cityDataList: List<CityData>) {
+        val adapter = CityDataAdapter(cityDataList)
+        binding.cityDataRecyclerView.adapter = adapter
     }
 }

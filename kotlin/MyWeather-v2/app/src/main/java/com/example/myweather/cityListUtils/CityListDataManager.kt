@@ -3,11 +3,13 @@ package com.example.myweather.cityListUtils
 import android.content.Context
 import android.util.JsonReader
 import android.util.Log
+import com.example.myweather.event.CityDataListReadyEvent
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.greenrobot.eventbus.EventBus
 import java.io.BufferedReader
 import java.io.File
 import java.io.FileInputStream
@@ -67,12 +69,17 @@ class CityListDataManager(private val context: Context) {
         val fileContent = stringBuilder.toString()
         cityDataList = gson.fromJson(fileContent, Array<CityData>::class.java)
 
-        for(city in cityDataList) {
-            println("city name:${city.name}")
-        }
+        Log.d(tag, "get city data list done and send event bus")
+        EventBus.getDefault().post(CityDataListReadyEvent(cityDataList.toList()))
 
     } catch (e: IOException) {
         e.printStackTrace()
+    }
+
+    fun printCityDataList() {
+        for(city in cityDataList) {
+            println("city name:${city.name}")
+        }
     }
 }
 
