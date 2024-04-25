@@ -7,40 +7,44 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/searchbar_scrolling_view_behavior">
+        <!--       显示屏幕中需要的数据-->
+<!--        <androidx.recyclerview.widget.RecyclerView-->
+<!--            android:id="@+id/recyclerView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" />-->
+    </androidx.core.widget.NestedScrollView>
 
-        <!-- NestedScrollingChild goes here (NestedScrollView, RecyclerView, etc.). -->
-        <androidx.core.widget.NestedScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/searchbar_scrolling_view_behavior">
-            <!-- Screen content goes here. -->
-        </androidx.core.widget.NestedScrollView>
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.appbar.AppBarLayout
+        <com.google.android.material.search.SearchBar
+            android:id="@+id/search_bar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <com.google.android.material.search.SearchBar
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/searchbar_hint" />
-        </com.google.android.material.appbar.AppBarLayout>
+            android:layout_height="wrap_content"
+            android:hint="搜索" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.search.SearchView
-            android:id="@+id/search_view"
+    <!--    点搜索框后显示的view-->
+    <com.google.android.material.search.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:hint="搜索view"
+        app:layout_constraintTop_toTopOf="parent">
+<!--        app:layout_anchor="@id/search_bar">-->
+
+        <TextView
+            android:id="@+id/result"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:hint="@string/searchbar_hint"
-            app:layout_anchor="@id/search_bar">
-            <!-- Search suggestions/results go here (ScrollView, RecyclerView, etc.). -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/result"/>
-        </com.google.android.material.search.SearchView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            android:layout_height="wrap_content" />
+    </com.google.android.material.search.SearchView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
