@@ -1,6 +1,5 @@
 package com.example.myweather
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -15,7 +14,6 @@ import com.example.myweather.cityListUtils.CityListDataManager
 import com.example.myweather.databinding.ActivityMainBinding
 import com.example.myweather.event.CityDataListReadyEvent
 import com.example.myweather.event.ForecastResponseEvent
-import com.example.myweather.event.WeatherResponseEvent
 import com.example.myweather.openWeatherMap.ForecastAdapter
 import com.example.myweather.openWeatherMap.ForecastResponse
 import com.example.myweather.ui.CityWeatherFragment
@@ -25,7 +23,6 @@ import org.greenrobot.eventbus.ThreadMode
 
 class MainActivity : AppCompatActivity() {
     private val tag = "MainActivity"
-    private val kelvins = 273.15
     private lateinit var binding : ActivityMainBinding
     private lateinit var cityListManager : CityListDataManager
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,11 +52,9 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_container, CityWeatherFragment())
             .commit()
 
-        binding.searchBarLayout.buttonSearch.setOnClickListener { searchCityNameWeather() }
-
         binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.cityDataRecyclerView.layoutManager = LinearLayoutManager(this)
-        binding.cityDataRecyclerView.adapter = CityDataAdapter(this, emptyList<CityData>())
+        binding.cityDataRecyclerView.adapter = CityDataAdapter(emptyList<CityData>())
         binding.searchBar.apply {
             setOnClickListener { binding.searchView.show() }
         }
@@ -83,19 +78,21 @@ class MainActivity : AppCompatActivity() {
         updateCityDataList(event.cityDataList)
     }
 
-    private fun searchCityNameWeather() {
-        val cityName = binding.searchBarLayout.editTextCity.text.toString().trim()
-        RetrofitClient.getWeatherByCityName(cityName)
-        RetrofitClient.getForecastByCityName(cityName)
-    }
-
     private fun updateForecastList(forecastResponse: ForecastResponse) {
         val adapter = ForecastAdapter(forecastResponse.forecastCellList!!)
         binding.forecastRecyclerView.adapter = adapter
     }
 
     private fun updateCityDataList(cityDataList: List<CityData>) {
-        val adapter = CityDataAdapter(this, cityDataList)
+        val adapter = CityDataAdapter(cityDataList)
+        adapter.onItemClick = { cityData ->
+            val cityName = cityData.name
+            RetrofitClient.getWeatherByCityName(cityName)
+            RetrofitClient.getForecastByCityName(cityName)
+            val message = "Click item name: $cityName"
+            binding.searchView.hide()
+            Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        }
         binding.cityDataRecyclerView.adapter = adapter
     }
 }
