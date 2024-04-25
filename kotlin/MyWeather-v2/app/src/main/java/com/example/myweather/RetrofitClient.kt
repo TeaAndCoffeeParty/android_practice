@@ -1,5 +1,6 @@
 package com.example.myweather
 
+import android.util.Log
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
 import com.example.myweather.openWeatherMap.ForecastResponse
@@ -12,6 +13,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
+    private const val TAG = "RetrofitClient"
     private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
     private const val API_KEY = "3cca6949aed6929337a048907a050252"
 
@@ -64,7 +66,7 @@ object RetrofitClient {
     }
 
     private fun handleForecastFailure(message: String) {
-        println("handleForecastFailure:${message}")
+        Log.d(TAG,"handleForecastFailure:${message}")
     }
 
     private fun handleForecastData(forecastData: ForecastResponse?) {
@@ -77,11 +79,11 @@ object RetrofitClient {
     }
 
     private  fun printForecastResponse(forecastResponse: ForecastResponse) {
-        println("cod:${forecastResponse.cod}")
-        println("message:${forecastResponse.message}")
-        println("cnt:${forecastResponse.cnt}")
-        println("list:${forecastResponse.forecastCellList?.size}")
-        println("city id:${forecastResponse.forecastCity?.id} name:${forecastResponse.forecastCity?.name}")
+        Log.d(TAG,"cod:${forecastResponse.cod}")
+        Log.d(TAG,"message:${forecastResponse.message}")
+        Log.d(TAG,"cnt:${forecastResponse.cnt}")
+        Log.d(TAG,"list:${forecastResponse.forecastCellList?.size}")
+        Log.d(TAG,"city id:${forecastResponse.forecastCity?.id} name:${forecastResponse.forecastCity?.name}")
     }
 
     private fun handleWeatherData(weatherData: WeatherResponse?) {
@@ -95,34 +97,34 @@ object RetrofitClient {
 
     private fun printWeatherData(weatherData: WeatherResponse?) {
         if (weatherData != null) {
-            println("cord: lat:${weatherData.weatherResponseCoord?.lat},lon:${weatherData.weatherResponseCoord?.lon}")
+            Log.d(TAG,"cord: lat:${weatherData.weatherResponseCoord?.lat},lon:${weatherData.weatherResponseCoord?.lon}")
             for (weather in weatherData.weatherResponseWeather) {
-                println(
+                Log.d(TAG,
                     "weather: id:${weather.id},main:${weather.main}," +
                             "description:${weather.description},icon:${weather.icon}"
                 )
             }
-            println("base:${weatherData.base}")
-            println(
+            Log.d(TAG,"base:${weatherData.base}")
+            Log.d(TAG,
                 "main: temperature:${weatherData.weatherResponseMain?.temp},pressure:${weatherData.weatherResponseMain?.pressure}," +
                         "humidity:${weatherData.weatherResponseMain?.humidity},temperature_min:${weatherData.weatherResponseMain?.temp_min}," +
                         "temperature_max:${weatherData.weatherResponseMain?.temp_max}"
             )
-            println("visibility:${weatherData.visibility}")
-            println("wind: speed:${weatherData.weatherResponseWind?.speed},deq:${weatherData.weatherResponseWind?.deg}")
-            println("clouds: clouds:${weatherData.clouds?.clouds}")
-            println("dt: ${weatherData.dt}")
-            println(
+            Log.d(TAG,"visibility:${weatherData.visibility}")
+            Log.d(TAG,"wind: speed:${weatherData.weatherResponseWind?.speed},deq:${weatherData.weatherResponseWind?.deg}")
+            Log.d(TAG,"clouds: clouds:${weatherData.clouds?.clouds}")
+            Log.d(TAG,"dt: ${weatherData.dt}")
+            Log.d(TAG,
                 "sys: type:${weatherData.weatherResponseSys?.type},id:${weatherData.weatherResponseSys?.id},message:${weatherData.weatherResponseSys?.message}" +
                         ",country:${weatherData.weatherResponseSys?.country},+sunrise:${weatherData.weatherResponseSys?.sunrise},+sunset:${weatherData.weatherResponseSys?.sunset}"
             )
-            println("id: ${weatherData.id}")
-            println("name: ${weatherData.name}")
-            println("cod: ${weatherData.cod}")
+            Log.d(TAG,"id: ${weatherData.id}")
+            Log.d(TAG,"name: ${weatherData.name}")
+            Log.d(TAG,"cod: ${weatherData.cod}")
         }
     }
 
     private fun handleWeatherFailure(message: String) {
-        println("Request failed: $message")
+        Log.d(TAG,"Request failed: $message")
     }
 }

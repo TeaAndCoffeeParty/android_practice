@@ -54,11 +54,11 @@ class MainActivity : AppCompatActivity() {
 
         binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.cityDataRecyclerView.layoutManager = LinearLayoutManager(this)
-        binding.cityDataRecyclerView.adapter = CityDataAdapter(emptyList<CityData>())
+        binding.cityDataRecyclerView.adapter = CityDataAdapter(this, emptyList<CityData>())
         binding.searchBar.apply {
             setOnClickListener { binding.searchView.show() }
         }
-        binding.searchView.editText.setOnEditorActionListener { v, i, event->
+        binding.searchView.editText.setOnEditorActionListener { v, _, _ ->
             val filterText = v.editableText.toString()
             Toast.makeText(v.context, "the text: $filterText", Toast.LENGTH_SHORT).show()
             val cityDataAdapter : CityDataAdapter= binding.cityDataRecyclerView.adapter as CityDataAdapter
@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCityDataList(cityDataList: List<CityData>) {
-        val adapter = CityDataAdapter(cityDataList)
+        val adapter = CityDataAdapter(this, cityDataList)
         binding.cityDataRecyclerView.adapter = adapter
     }
 }
