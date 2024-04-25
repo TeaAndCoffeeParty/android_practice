@@ -20,9 +20,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-            <include
-                android:id="@+id/city_weather_layout"
-                layout="@layout/city_weather"
+            <FrameLayout
+                android:id="@+id/fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 

@@ -18,6 +18,7 @@ import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
 import com.example.myweather.openWeatherMap.ForecastAdapter
 import com.example.myweather.openWeatherMap.ForecastResponse
+import com.example.myweather.ui.CityWeatherFragment
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -50,6 +51,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, CityWeatherFragment())
+            .commit()
+
         binding.searchBarLayout.buttonSearch.setOnClickListener { searchCityNameWeather() }
 
         binding.forecastRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -65,25 +70,6 @@ class MainActivity : AppCompatActivity() {
             cityDataAdapter.setFilter(filterText)
             return@setOnEditorActionListener false
         }
-    }
-
-
-    @SuppressLint("SetTextI18n")
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onReceiveWeatherResponse(event: WeatherResponseEvent) {
-        val weatherResponse = event.weatherResponse
-        val cityName = weatherResponse.name
-        val temperature = weatherResponse.weatherResponseMain?.temp?.minus(kelvins)
-        val maxTemperature = weatherResponse.weatherResponseMain?.temp_max?.minus(kelvins)
-        val minTemperature = weatherResponse.weatherResponseMain?.temp_min?.minus(kelvins)
-
-        binding.cityWeatherLayout.textViewCityName.text = cityName
-        binding.cityWeatherLayout.textViewTemperature.text = temperature?.toInt().toString()
-        binding.cityWeatherLayout.textViewMaxMinTemperature.text =
-            "${maxTemperature?.toInt()} / ${minTemperature?.toInt()}"
-        binding.cityWeatherLayout.textViewWeather.text =
-            weatherResponse.weatherResponseWeather.first().main + " | " +
-                    weatherResponse.weatherResponseWeather.first().description
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

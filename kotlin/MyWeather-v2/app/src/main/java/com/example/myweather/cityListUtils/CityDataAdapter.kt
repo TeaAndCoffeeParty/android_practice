@@ -19,7 +19,7 @@ class CityDataAdapter(private val context: Context, private val originCityDataLi
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnClickListener {
         init {
-            itemView.setOnClickListener(this)
+            view.setOnClickListener(this)
         }
         val cityDataId : TextView = view.findViewById<TextView>(R.id.city_data_id)
         val cityDataName : TextView = view.findViewById<TextView>(R.id.city_data_name)
