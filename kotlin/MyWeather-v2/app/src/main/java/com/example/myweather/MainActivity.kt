@@ -1,10 +1,14 @@
 package com.example.myweather
 
+import android.Manifest.permission.*
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.*
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val tag = "MainActivity"
     private lateinit var binding : ActivityMainBinding
     private lateinit var cityListManager : CityListDataManager
+    private val permissionRequestCode = 1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -36,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        checkLocationPermission()
         EventBus.getDefault().register(this)
         initView()
 
@@ -60,12 +66,55 @@ class MainActivity : AppCompatActivity() {
         }
         binding.searchView.editText.setOnEditorActionListener { v, _, _ ->
             val filterText = v.editableText.toString()
-            Toast.makeText(v.context, "the text: $filterText", Toast.LENGTH_SHORT).show()
+            Toast.makeText(v.context, "the text: $filterText", Toast.LENGTH_LONG).show()
             val cityDataAdapter : CityDataAdapter= binding.cityDataRecyclerView.adapter as CityDataAdapter
             cityDataAdapter.setFilter(filterText)
             return@setOnEditorActionListener false
         }
+
     }
+
+
+    private fun checkLocationPermission() {
+        val fineLocationPermission = checkSelfPermission(this, ACCESS_FINE_LOCATION)
+        val coarseLocationPermission = checkSelfPermission(this, ACCESS_COARSE_LOCATION)
+        if((fineLocationPermission != PackageManager.PERMISSION_GRANTED) ||
+            (coarseLocationPermission != PackageManager.PERMISSION_GRANTED)
+        ) {
+            ActivityCompat.requestPermissions(this,
+                arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
+                permissionRequestCode)
+        } else {
+            Log.d(tag, "The app have the location permission")
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == permissionRequestCode) {
+            var allPermissionsGranted = true
+            for (result in grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allPermissionsGranted = false
+                    break
+                }
+            }
+
+            if (!allPermissionsGranted) {
+                Toast.makeText(this, R.string.requiredPermissionPrompt,Toast.LENGTH_SHORT).show()
+                finishAffinity()
+            } else {
+                Log.d(tag, "The app have request the fine location permission")
+            }
+        }
+
+    }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onReceiveForecastResponse(event: ForecastResponseEvent) {
