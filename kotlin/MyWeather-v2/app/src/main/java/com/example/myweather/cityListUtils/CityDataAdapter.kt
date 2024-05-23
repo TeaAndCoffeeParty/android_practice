@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myweather.R
+import java.util.Locale
 
 
 class CityDataAdapter(private val originCityDataList: List<CityData>) :
@@ -42,9 +43,9 @@ class CityDataAdapter(private val originCityDataList: List<CityData>) :
         holder.cityDataName.text = cityData.name
         holder.cityDataCountry.text = cityData.country
         holder.cityDataCoordinate.text = buildString {
-            append(String.format("%.1f", cityData.coord.lon))
+            append(String.format(Locale.getDefault(),"%.1f", cityData.coord.lon))
             append(",")
-            append(String.format("%.1f", cityData.coord.lat))
+            append(String.format(Locale.getDefault(),"%.1f", cityData.coord.lat))
         }
     }
     override fun getItemCount() = filterCityDataList.size
