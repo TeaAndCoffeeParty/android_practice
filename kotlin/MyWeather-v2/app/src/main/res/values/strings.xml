@@ -3,4 +3,5 @@
     <string name="editTextCityHint">please input the city name</string>
     <string name="buttonSearchText">search</string>
     <string name="degree">℃</string>
+    <string name="requiredPermissionPrompt">The necessary permissions have been denied and the application will exit.</string>
 </resources>
