@@ -1,6 +1,8 @@
 package com.example.myweather.cityListUtils
 
 import android.annotation.SuppressLint
+import android.location.Location
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,5 +63,25 @@ class CityDataAdapter(private val originCityDataList: List<CityData>) :
             }
         }
         notifyDataSetChanged()
+    }
+
+    fun getClosestCityName(deviceLocation: Location) : CityData? {
+        var closestCityData : CityData ?= null
+        var minDistance = Double.MAX_VALUE
+        for(cityData in originCityDataList) {
+            val cityLocation = Location("")
+            cityLocation.latitude = cityData.coord.lat
+            cityLocation.longitude = cityData.coord.lon
+
+            val distance = deviceLocation.distanceTo(cityLocation)
+            if(distance < minDistance) {
+                minDistance = distance.toDouble()
+                closestCityData = cityData
+                Log.d("CityDataAdapter", "city name: ${closestCityData.name}, " +
+                        "${closestCityData.coord.lat},${closestCityData.coord.lon}, "+
+                        "distance:${distance.toDouble()}")
+            }
+        }
+        return closestCityData
     }
 }

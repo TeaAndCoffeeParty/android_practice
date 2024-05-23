@@ -125,10 +125,21 @@ class MainActivity : AppCompatActivity(), LocationManagerUtils.PermissionCallbac
     }
 
     override fun onLocationChanged(location: Location) {
-        val message = "latitude:${location.latitude}, longitude:${location.longitude}"
-        RetrofitClient.getWeatherByLocation(location)
-        RetrofitClient.getForecastByLocation(location)
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        val cityDataAdapter = binding.cityDataRecyclerView.adapter as CityDataAdapter
+        val closestCityData = cityDataAdapter.getClosestCityName(location)
+        val locationMessage = "latitude:${location.latitude}, longitude:${location.longitude}"
+        val cityName = "closet CityName:${closestCityData?.name}"
+        val message = "$locationMessage, $cityName"
+        if(closestCityData == null) {
+            RetrofitClient.getWeatherByLocation(location)
+            RetrofitClient.getForecastByLocation(location)
+            Toast.makeText(this, "update by location $locationMessage", Toast.LENGTH_SHORT).show()
+        } else {
+            val name = closestCityData.name
+            RetrofitClient.getWeatherByCityName(name)
+            RetrofitClient.getForecastByCityName(name)
+            Toast.makeText(this, "update by city name $cityName", Toast.LENGTH_SHORT).show()
+        }
         Log.d(tag, message)
     }
 }
