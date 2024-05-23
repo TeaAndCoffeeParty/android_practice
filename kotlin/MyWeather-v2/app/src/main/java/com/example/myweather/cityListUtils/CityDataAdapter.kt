@@ -77,11 +77,11 @@ class CityDataAdapter(private val originCityDataList: List<CityData>) :
             if(distance < minDistance) {
                 minDistance = distance.toDouble()
                 closestCityData = cityData
-                Log.d("CityDataAdapter", "city name: ${closestCityData.name}, " +
-                        "${closestCityData.coord.lat},${closestCityData.coord.lon}, "+
-                        "distance:${distance.toDouble()}")
             }
         }
+        Log.d("CityDataAdapter", "city name: ${closestCityData?.name}, " +
+                "${closestCityData?.coord?.lat},${closestCityData?.coord?.lon}, "+
+                "distance:${minDistance}")
         return closestCityData
     }
 }
