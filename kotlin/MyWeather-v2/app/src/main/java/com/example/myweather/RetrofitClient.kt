@@ -1,5 +1,6 @@
 package com.example.myweather
 
+import android.location.Location
 import android.util.Log
 import com.example.myweather.event.ForecastResponseEvent
 import com.example.myweather.event.WeatherResponseEvent
@@ -14,18 +15,17 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
     private const val TAG = "RetrofitClient"
-    private const val BASE_URL = "https://api.openweathermap.org/data/2.5/"
+    private const val BASE_URL_VERSION_2_5 = "https://api.openweathermap.org/data/2.5/"
     private const val API_KEY = "3cca6949aed6929337a048907a050252"
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(BASE_URL_VERSION_2_5)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     private val weatherService: WeatherService by lazy { retrofit.create(WeatherService::class.java) }
 
-    fun getWeatherByCityName(cityName: String) {
-        val call = weatherService.getWeatherByCityName(cityName, API_KEY)
+    private fun callGetCurrentWeather(call: Call<WeatherResponse>) {
         call.enqueue(object : Callback<WeatherResponse> {
             override fun onResponse(
                 call: Call<WeatherResponse>,
@@ -44,12 +44,21 @@ object RetrofitClient {
             }
         })
     }
+    fun getWeatherByCityName(cityName: String) {
+        val call = weatherService.getWeatherByCityName(cityName, API_KEY)
+        callGetCurrentWeather(call)
+    }
 
-    fun getForecastByCityName(cityName: String) {
-        val call = weatherService.getForecastByCityName(cityName, API_KEY)
+    fun getWeatherByLocation(location: Location) {
+        val call = weatherService.getWeatherByLocation(location.latitude, location.longitude, API_KEY)
+        Log.d(TAG, "lat:${location.latitude},lon:${location.longitude}")
+        callGetCurrentWeather(call)
+   }
+
+    private fun callGetForecast(call: Call<ForecastResponse>) {
         call.enqueue(object : Callback<ForecastResponse> {
-            override fun onResponse(call : Call<ForecastResponse>,
-                response: Response<ForecastResponse>) {
+            override fun onResponse(
+                call : Call<ForecastResponse>, response: Response<ForecastResponse>) {
                 if(response.isSuccessful) {
                     val forecastData = response.body()
                     handleForecastData(forecastData)
@@ -63,6 +72,17 @@ object RetrofitClient {
                 handleForecastFailure(t.message!!)
             }
         })
+    }
+
+    fun getForecastByCityName(cityName: String) {
+        val call = weatherService.getForecastByCityName(cityName, API_KEY)
+        callGetForecast(call)
+   }
+
+    fun getForecastByLocation(location: Location) {
+        val call = weatherService.getForecastByLocation(location.latitude, location.longitude, API_KEY)
+        callGetForecast(call)
+
     }
 
     private fun handleForecastFailure(message: String) {

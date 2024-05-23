@@ -65,7 +65,7 @@ class LocationManagerUtils(val context: Context, ) {
     }
 
     @SuppressLint("MissingPermission")
-    fun requestGPSLocationUpdates() {
+    fun requestNetworkLocationUpdates() {
         locationManager.requestLocationUpdates(
             LocationManager.NETWORK_PROVIDER,
             1000L,

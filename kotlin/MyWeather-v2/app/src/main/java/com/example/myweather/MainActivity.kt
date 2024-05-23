@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity(), LocationManagerUtils.PermissionCallbac
 
     override fun onPermissionGranted() {
         Log.d(tag, "onPermissionGranted")
-        locationManagerUtils.requestGPSLocationUpdates()
+        locationManagerUtils.requestNetworkLocationUpdates()
     }
 
     override fun onPermissionDenied() {
@@ -125,6 +125,10 @@ class MainActivity : AppCompatActivity(), LocationManagerUtils.PermissionCallbac
     }
 
     override fun onLocationChanged(location: Location) {
-        Log.d(tag, "latitude:${location.latitude}, longitude:${location.longitude}")
+        val message = "latitude:${location.latitude}, longitude:${location.longitude}"
+        RetrofitClient.getWeatherByLocation(location)
+        RetrofitClient.getForecastByLocation(location)
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Log.d(tag, message)
     }
 }
