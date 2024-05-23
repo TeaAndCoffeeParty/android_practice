@@ -1,14 +1,12 @@
 package com.example.myweather
 
-import android.Manifest.permission.*
-import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.*
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +16,7 @@ import com.example.myweather.cityListUtils.CityListDataManager
 import com.example.myweather.databinding.ActivityMainBinding
 import com.example.myweather.event.CityDataListReadyEvent
 import com.example.myweather.event.ForecastResponseEvent
+import com.example.myweather.locationUtils.LocationManagerUtils
 import com.example.myweather.openWeatherMap.ForecastAdapter
 import com.example.myweather.openWeatherMap.ForecastResponse
 import com.example.myweather.ui.CityWeatherFragment
@@ -25,11 +24,11 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), LocationManagerUtils.PermissionCallback {
     private val tag = "MainActivity"
     private lateinit var binding : ActivityMainBinding
     private lateinit var cityListManager : CityListDataManager
-    private val permissionRequestCode = 1
+    private lateinit var locationManagerUtils: LocationManagerUtils
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -41,7 +40,10 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        checkLocationPermission()
+        locationManagerUtils = LocationManagerUtils(this).apply {
+            setPermissionCallback(this@MainActivity)
+            requestLocationPermission(this@MainActivity)
+        }
         EventBus.getDefault().register(this)
         initView()
 
@@ -51,6 +53,15 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         EventBus.getDefault().unregister(this)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        locationManagerUtils.onRequestPermissionsResult(requestCode, grantResults)
     }
 
     private fun initView() {
@@ -73,48 +84,6 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
-    private fun checkLocationPermission() {
-        val fineLocationPermission = checkSelfPermission(this, ACCESS_FINE_LOCATION)
-        val coarseLocationPermission = checkSelfPermission(this, ACCESS_COARSE_LOCATION)
-        if((fineLocationPermission != PackageManager.PERMISSION_GRANTED) ||
-            (coarseLocationPermission != PackageManager.PERMISSION_GRANTED)
-        ) {
-            ActivityCompat.requestPermissions(this,
-                arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                permissionRequestCode)
-        } else {
-            Log.d(tag, "The app have the location permission")
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        if (requestCode == permissionRequestCode) {
-            var allPermissionsGranted = true
-            for (result in grantResults) {
-                if (result != PackageManager.PERMISSION_GRANTED) {
-                    allPermissionsGranted = false
-                    break
-                }
-            }
-
-            if (!allPermissionsGranted) {
-                Toast.makeText(this, R.string.requiredPermissionPrompt,Toast.LENGTH_SHORT).show()
-                finishAffinity()
-            } else {
-                Log.d(tag, "The app have request the fine location permission")
-            }
-        }
-
-    }
-
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onReceiveForecastResponse(event: ForecastResponseEvent) {
@@ -143,5 +112,19 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
         }
         binding.cityDataRecyclerView.adapter = adapter
+    }
+
+    override fun onPermissionGranted() {
+        Log.d(tag, "onPermissionGranted")
+        locationManagerUtils.requestGPSLocationUpdates()
+    }
+
+    override fun onPermissionDenied() {
+        Toast.makeText(this, R.string.requiredPermissionPrompt, Toast.LENGTH_SHORT).show()
+        ActivityCompat.finishAffinity(this)
+    }
+
+    override fun onLocationChanged(location: Location) {
+        Log.d(tag, "latitude:${location.latitude}, longitude:${location.longitude}")
     }
 }
