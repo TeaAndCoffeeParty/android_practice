@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -54,6 +55,12 @@ class MainActivity : AppCompatActivity() {
 
         binding.unbindServiceBtn.setOnClickListener {
             unbindService(connection)
+        }
+
+        binding.startIntentServiceBtn.setOnClickListener {
+            Log.d("MainActivity", "Thread id is ${Thread.currentThread().name}")
+            val intent = Intent(this, MyIntentService::class.java)
+            startService(intent)
         }
     }
 }
